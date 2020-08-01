@@ -25,7 +25,7 @@ const App = () => {
                     <Stack.Screen
                         name="Verification"
                         component={MobileVerification}
-                        // options={{ headerShown: false }}
+                        options={{ headerShown: false }}
                     />
                 </Stack.Navigator>
             </NavigationContainer>

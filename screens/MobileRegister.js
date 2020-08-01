@@ -103,7 +103,7 @@ export default MobileRegister = ({ navigation }) => {
                 >
                     <TextInput
                         placeholder="رقم الجوال"
-                        keyboardType="phone-pad"
+                        keyboardType="number-pad"
                         returnKeyType="done"
                         style={{
                             width: "75%",
