@@ -4,25 +4,47 @@ import AsyncStorage from "@react-native-community/async-storage";
 import {
     TextInput,
     TouchableNativeFeedback,
-    TouchableOpacity,
-} from "react-native-gesture-handler";
+} from "react-native";
+
+
 
 export default MobileVerification = () => {
     const [mobile, setMobile] = useState("");
-    const showData = async () => {
+    const [confirmDisabled, setConfirmDisabled] = useState(true)
+    const [verCode, setVerCode] = useState("")
+    const [countDown, setCountDown] = useState("2:00");
+    let countDownDate = new Date(new Date().getTime() + 0.3 * 60000).getTime();
+    const re = /^[0-9\b]+$/;
+
+    const getMobile = async () => {
         try {
             const value = await AsyncStorage.getItem("@mobile");
             if (value !== null) {
                 setMobile(value);
             } else console.log(value);
         } catch (e) {
-            // error reading value
+            console.log(e)
         }
     };
 
+
     useEffect(() => {
-        showData();
+        getMobile();
+
     });
+
+    const change = (num) => {
+        if (num.length === 0) setVerCode("");
+        else if (re.test(num)) {
+            setVerCode(num);
+            if (num.length === 6)
+                setConfirmDisabled(false)
+            else setConfirmDisabled(true)
+        }
+
+    }
+
+
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -98,6 +120,9 @@ export default MobileVerification = () => {
                         textContentType="oneTimeCode"
                         keyboardType="number-pad"
                         returnKeyType="done"
+                        value={verCode}
+                        onChangeText={text => change(text)}
+                        maxLength={6}
                     />
                     <Text
                         style={{
@@ -108,12 +133,13 @@ export default MobileVerification = () => {
                             opacity: 0.38,
                             marginTop: 18.2,
                         }}
+
                     >
-                        أعد طلب الرمز {"1:23"}
+                        أعد طلب الرمز {countDown}
                     </Text>
                 </View>
             </View>
-            <TouchableNativeFeedback onPress={() => console.log("hii")}>
+            <TouchableNativeFeedback onPress={() => console.log("hii")} disabled={confirmDisabled}>
                 <View
                     style={{
                         width: "90%",
@@ -124,7 +150,7 @@ export default MobileVerification = () => {
                         justifyContent: "center",
                         alignItems: "center",
                         alignSelf: "center",
-                        opacity: 0.3,
+                        opacity: confirmDisabled ? 0.3 : 1,
                     }}
                 >
                     <Text
